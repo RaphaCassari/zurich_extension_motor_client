@@ -92,7 +92,7 @@ export default {
       }
     },
     async configure() {
-      const popupUrl = `${window.location.origin}/#/configure`;
+      const popupUrl = `${window.location.origin}/zurich_extension_motor_client/#/configure`;
       await tableau.extensions.ui
         .displayDialogAsync(popupUrl, "JSON.stringify(dataTable)", {
           height: 750,
@@ -113,7 +113,7 @@ export default {
     },
     async onCommentClick() {
       let ref = this;
-      const popupUrl = `${window.location.origin}/#/comment`;
+      const popupUrl = `${window.location.origin}/zurich_extension_motor_client/#/comment`;
       const worksheet = tableau.extensions.dashboardContent.dashboard.worksheets.find(
         (w) => w.name === "DETALHE1" //tableau.extensions.settings.get("MANUAL_REVIEW_WORKSHEET")
       );
@@ -155,7 +155,7 @@ export default {
           markSelectionEvent.getMarksAsync().then((marks) => {
             const dataTable = marks.data[0];
             if (dataTable.totalRowCount == 1) {
-              const popupUrl = `${window.location.origin}/#/review_validation`;
+              const popupUrl = `${window.location.origin}/zurich_extension_motor_client/#/review_validation`;
               tableau.extensions.ui
                 .displayDialogAsync(popupUrl, JSON.stringify(dataTable), {
                   height: 450,
@@ -186,7 +186,7 @@ export default {
             dataTable["analystName"] = this.analyst_name;
             console.log(dataTable);
             if (dataTable.totalRowCount == 1) {
-              const popupUrl = `${window.location.origin}/#/manual_review`;
+              const popupUrl = `${window.location.origin}/zurich_extension_motor_client/#/manual_review`;
               tableau.extensions.ui
                 .displayDialogAsync(popupUrl, JSON.stringify(dataTable), {
                   height: 490,

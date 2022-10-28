@@ -18,22 +18,22 @@ export default new Router({
             component: Main
         },
         {
-            path: "/zurich_extension_motor_client/review_validation",
+            path: "/review_validation",
             name: "ReviewValidation",
             component: ReviewValidation
         },
         {
-            path: "/zurich_extension_motor_client/manual_review",
+            path: "/manual_review",
             name: "ManualReview",
             component: manualReview
         },
         {
-            path: "/zurich_extension_motor_client/configure",
+            path: "/configure",
             name: "Configure",
             component: Configure
         },
         {
-            path: "/zurich_extension_motor_client/comment",
+            path: "/comment",
             name: "Comment",
             component: Comment
         }
