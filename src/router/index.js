@@ -13,7 +13,7 @@ export default new Router({
 /*     mode: 'history',
     base: '/zurich_extension_motor_client/', */
     routes: [{
-            path: "/zurich_extension_motor_client/",
+            path: "/",
             name: "Main",
             component: Main
         },
