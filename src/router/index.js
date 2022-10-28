@@ -10,30 +10,30 @@ import Comment from "@/components/comment";
 Vue.use(Router);
 
 export default new Router({
-    mode: 'history',
-    base: '/zurich_extension_motor_client/',
+/*     mode: 'history',
+    base: '/zurich_extension_motor_client/', */
     routes: [{
-            path: "/",
+            path: "/zurich_extension_motor_client/",
             name: "Main",
             component: Main
         },
         {
-            path: "/review_validation",
+            path: "/zurich_extension_motor_client/review_validation",
             name: "ReviewValidation",
             component: ReviewValidation
         },
         {
-            path: "/manual_review",
+            path: "/zurich_extension_motor_client/manual_review",
             name: "ManualReview",
             component: manualReview
         },
         {
-            path: "/configure",
+            path: "/zurich_extension_motor_client/configure",
             name: "Configure",
             component: Configure
         },
         {
-            path: "/comment",
+            path: "/zurich_extension_motor_client/comment",
             name: "Comment",
             component: Comment
         }
