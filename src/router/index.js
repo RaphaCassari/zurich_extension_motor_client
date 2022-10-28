@@ -10,6 +10,7 @@ import Comment from "@/components/comment";
 Vue.use(Router);
 
 export default new Router({
+    mode: 'history',
     base: '/zurich_extension_motor_client/',
     routes: [{
             path: "/",
