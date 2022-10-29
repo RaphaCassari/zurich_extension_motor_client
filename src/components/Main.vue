@@ -119,6 +119,7 @@ export default {
       );
       worksheet.getSummaryDataAsync().then(function (dataTable) {
         dataTable["analystName"] = ref.analyst_name;
+        dataTable["analysts"] = ref.analysts;
 
         tableau.extensions.ui
           .displayDialogAsync(popupUrl, JSON.stringify(dataTable), {

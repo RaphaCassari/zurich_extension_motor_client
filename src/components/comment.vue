@@ -3,6 +3,23 @@
     <template>
       <v-container fluid class="text-right">
         <v-row>
+          <v-col cols="6">
+            <v-autocomplete
+              v-model="manual_review.analystName"
+              :items="analysts"
+              label="Analista Principal"
+            ></v-autocomplete>
+          </v-col>
+          <v-col cols="6">
+            <v-autocomplete
+              v-model="manual_review.analystName2"
+              :items="analysts"
+              label="Analista Segundario"
+            ></v-autocomplete>
+          </v-col>
+        </v-row>
+
+        <v-row>
           <v-col cols="12" md="6">
             <v-textarea
               filled
@@ -34,23 +51,44 @@ export default {
   data() {
     return {
       firstComment: true,
+      analysts: [],
       manual_review: {
         comment: "",
         created_at: null,
         sise_key: null,
         user_name: null,
-        analystName: null,
+        analystName: "",
+        analystName2: "",
         coverage_id: null,
-        type_loss: null,
-        number_warning: null,
       },
     };
   },
   methods: {
     send() {
       if (this.firstComment) {
+        axios.post(`${config.URL_DEV}/create_comment`, this.manual_review).then((res) => {
+          const worksheet = tableau.extensions.dashboardContent.dashboard.worksheets.find(
+            (w) => w.name === "DETALHE2"
+          );
+          worksheet.getDataSourcesAsync().then((datasources) => {
+            const datasource = datasources.find(
+              (d) =>
+                d.name === tableau.extensions.settings.get("MANUAL_REVIEW_DATASOURCE")
+            );
+            datasource.refreshAsync().then(() => {
+              Swal.fire(
+                "Comentario Enviado!",
+                "Feedback enviado por E-mail",
+                "success"
+              ).then(() => {
+                tableau.extensions.ui.closeDialog();
+              });
+            });
+          });
+        });
+      } else {
         axios
-          .post(`${config.URL_DEV}/create_comment_motor`, this.manual_review)
+          .post(`${config.URL_DEV}/update_comment`, this.manual_review)
           .then((res) => {
             const worksheet = tableau.extensions.dashboardContent.dashboard.worksheets.find(
               (w) => w.name === "DETALHE2"
@@ -70,33 +108,10 @@ export default {
                 });
               });
             });
-          });
-      } else {
-        axios
-          .post(`${config.URL_DEV}/update_comment_motor`, this.manual_review)
-          .then((res) => {
-            /*             const worksheet = tableau.extensions.dashboardContent.dashboard.worksheets.find(
-              (w) => w.name === "DETALHE2"
-            );
-            worksheet.getDataSourcesAsync().then((datasources) => {
-              const datasource = datasources.find(
-                (d) =>
-                  d.name === tableau.extensions.settings.get("MANUAL_REVIEW_DATASOURCE")
-              );
-              datasource.refreshAsync().then(() => {
-                Swal.fire(
-                  "Comentario Enviado!",
-                  "Feedback enviado por E-mail",
-                  "success"
-                ).then(() => {
-                  tableau.extensions.ui.closeDialog();
-                });
-              });
-            }); */
           })
           .catch((err) => console.log(err));
       }
-      axios.post(`${config.URL_DEV}/send_email_motor`, this.manual_review);
+      axios.post(`${config.URL_DEV}/send_email`, this.manual_review);
     },
     getValueFromDataTable(dataTable, fieldName) {
       let col = dataTable._columns.find((col) => {
@@ -121,40 +136,28 @@ export default {
 
     tableau.extensions.initializeDialogAsync().then(function (openPayload) {
       let dataTable = JSON.parse(openPayload);
-
-      let worksheet = tableau.extensions.dashboardContent.dashboard.worksheets.find(
-        (w) => w.name === "DETALHE2"
-      );
-      worksheet.getSummaryDataAsync().then(function (sumdata) {
-        ref.manual_review.type_loss = sumdata.data[0][1]._value;
-      });
-
-      worksheet = tableau.extensions.dashboardContent.dashboard.worksheets.find(
-        (w) => w.name === "DETALHE2"
-      );
-      worksheet.getSummaryDataAsync().then(function (sumdata) {
-        ref.manual_review.number_warning = sumdata.data[0][1]._value;
-      });
-
       ref.manual_review.analystName = dataTable.analystName;
+      console.log("dados porra: ", dataTable);
+      ref.analysts = dataTable.analysts;
+
       ref.manual_review.sise_key = ref.getValueFromDataTable(
         dataTable,
-        tableau.extensions.settings.get("MANUAL_REVIEW_SISE_KEY")
+        tableau.extensions.settings.get("VALIDATION_SISE_KEY_FIELD")
       );
 
       ref.manual_review.user_name = ref.getValueFromDataTable(
         dataTable,
         tableau.extensions.settings.get("VALIDATION_USER_FIELD")
       );
-
       ref.manual_review.coverage_id = ref.getValueFromDataTable(
         dataTable,
         tableau.extensions.settings.get("VALIDATION_COVERAGE_ID_FIELD")
       );
+      console.log(ref.manual_review, "test");
+      console.log(ref.manual_review.analystName);
       ref.manual_review.created_at = new Date(Date.now()).toISOString();
-      console.log(ref.manual_review);
 
-      let url = `${config.URL_DEV}/get_comment_motor?sise_key=${ref.manual_review.sise_key}`;
+      let url = `${config.URL_DEV}/get_comment?sise_key=${ref.manual_review.sise_key}`;
       axios.get(url, ref.manual_review).then((res) => {
         ref.manual_review.comment = res.data;
         if (res.data != "") {
