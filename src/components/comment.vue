@@ -113,7 +113,7 @@ export default {
           })
           .catch((err) => console.log(err));
       }
-      axios.post(`${config.HEROKU_URL}/send_email`, this.manual_review);
+      axios.post(`${config.HEROKU_URL}/send_email_motor`, this.manual_review);
     },
     getValueFromDataTable(dataTable, fieldName) {
       let col = dataTable._columns.find((col) => {
