@@ -66,29 +66,31 @@ export default {
   methods: {
     send() {
       if (this.firstComment) {
-        axios.post(`${config.URL_DEV}/create_comment`, this.manual_review).then((res) => {
-          const worksheet = tableau.extensions.dashboardContent.dashboard.worksheets.find(
-            (w) => w.name === "DETALHE2"
-          );
-          worksheet.getDataSourcesAsync().then((datasources) => {
-            const datasource = datasources.find(
-              (d) =>
-                d.name === tableau.extensions.settings.get("MANUAL_REVIEW_DATASOURCE")
+        axios
+          .post(`${config.HEROKU_URL}/create_comment`, this.manual_review)
+          .then((res) => {
+            const worksheet = tableau.extensions.dashboardContent.dashboard.worksheets.find(
+              (w) => w.name === "DETALHE2"
             );
-            datasource.refreshAsync().then(() => {
-              Swal.fire(
-                "Comentario Enviado!",
-                "Feedback enviado por E-mail",
-                "success"
-              ).then(() => {
-                tableau.extensions.ui.closeDialog();
+            worksheet.getDataSourcesAsync().then((datasources) => {
+              const datasource = datasources.find(
+                (d) =>
+                  d.name === tableau.extensions.settings.get("MANUAL_REVIEW_DATASOURCE")
+              );
+              datasource.refreshAsync().then(() => {
+                Swal.fire(
+                  "Comentario Enviado!",
+                  "Feedback enviado por E-mail",
+                  "success"
+                ).then(() => {
+                  tableau.extensions.ui.closeDialog();
+                });
               });
             });
           });
-        });
       } else {
         axios
-          .post(`${config.URL_DEV}/update_comment`, this.manual_review)
+          .post(`${config.HEROKU_URL}/update_comment`, this.manual_review)
           .then((res) => {
             const worksheet = tableau.extensions.dashboardContent.dashboard.worksheets.find(
               (w) => w.name === "DETALHE2"
@@ -111,7 +113,7 @@ export default {
           })
           .catch((err) => console.log(err));
       }
-      axios.post(`${config.URL_DEV}/send_email`, this.manual_review);
+      axios.post(`${config.HEROKU_URL}/send_email`, this.manual_review);
     },
     getValueFromDataTable(dataTable, fieldName) {
       let col = dataTable._columns.find((col) => {
@@ -137,7 +139,6 @@ export default {
     tableau.extensions.initializeDialogAsync().then(function (openPayload) {
       let dataTable = JSON.parse(openPayload);
       ref.manual_review.analystName = dataTable.analystName;
-      console.log("dados porra: ", dataTable);
       ref.analysts = dataTable.analysts;
 
       ref.manual_review.sise_key = ref.getValueFromDataTable(
@@ -157,7 +158,7 @@ export default {
       console.log(ref.manual_review.analystName);
       ref.manual_review.created_at = new Date(Date.now()).toISOString();
 
-      let url = `${config.URL_DEV}/get_comment?sise_key=${ref.manual_review.sise_key}`;
+      let url = `${config.HEROKU_URL}/get_comment?sise_key=${ref.manual_review.sise_key}`;
       axios.get(url, ref.manual_review).then((res) => {
         ref.manual_review.comment = res.data;
         if (res.data != "") {

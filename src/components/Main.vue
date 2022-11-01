@@ -112,6 +112,7 @@ export default {
         });
     },
     async onCommentClick() {
+      // TODO: bug não retorna analista principal
       let ref = this;
       const popupUrl = `${window.location.origin}/zurich_extension_motor_client/#/comment`;
       const worksheet = tableau.extensions.dashboardContent.dashboard.worksheets.find(
