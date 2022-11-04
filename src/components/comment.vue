@@ -60,11 +60,14 @@ export default {
         analystName: "",
         analystName2: "",
         coverage_id: null,
+        number_warning: "",
+        type_loss: null,
       },
     };
   },
   methods: {
     send() {
+      console.log(this.manual_review);
       if (this.firstComment) {
         axios
           .post(`${config.HEROKU_URL}/create_comment`, this.manual_review)
@@ -141,6 +144,13 @@ export default {
       ref.manual_review.analystName = dataTable.analystName;
       ref.analysts = dataTable.analysts;
 
+      const worksheet = tableau.extensions.dashboardContent.dashboard.worksheets.find(
+        (w) => w.name === "DETALHE2" //tableau.extensions.settings.get("MANUAL_REVIEW_WORKSHEET")
+      );
+      worksheet.getSummaryDataAsync().then(function (dataTable2) {
+        ref.manual_review.type_loss = dataTable2.data[0][1]._formattedValue;
+      });
+
       ref.manual_review.sise_key = ref.getValueFromDataTable(
         dataTable,
         tableau.extensions.settings.get("VALIDATION_SISE_KEY_FIELD")
@@ -156,6 +166,7 @@ export default {
       );
       console.log(ref.manual_review, "test");
       console.log(ref.manual_review.analystName);
+      ref.manual_review.number_warning = dataTable._data[0][1]._formattedValue;
       ref.manual_review.created_at = new Date(Date.now()).toISOString();
 
       let url = `${config.HEROKU_URL}/get_comment?sise_key=${ref.manual_review.sise_key}`;
