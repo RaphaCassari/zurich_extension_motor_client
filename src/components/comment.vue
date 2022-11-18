@@ -19,8 +19,26 @@
           </v-col>
         </v-row>
 
-        <v-row>
+        <v-row v-if="manual_review.analystName2 == ''">
           <v-col cols="12" md="6">
+            <v-textarea
+              filled
+              name="input-7-4"
+              label="Comentário Geral"
+              v-model="manual_review.comment"
+            ></v-textarea>
+          </v-col>
+        </v-row>
+        <v-row v-else>
+          <v-col cols="6" md="6">
+            <v-textarea
+              filled
+              name="input-7-4"
+              label="Comentário Geral"
+              v-model="manual_review.comment2"
+            ></v-textarea>
+          </v-col>
+          <v-col cols="6" md="6">
             <v-textarea
               filled
               name="input-7-4"
@@ -54,6 +72,7 @@ export default {
       analysts: [],
       manual_review: {
         comment: "",
+        comment2: "",
         created_at: null,
         sise_key: null,
         user_name: null,
